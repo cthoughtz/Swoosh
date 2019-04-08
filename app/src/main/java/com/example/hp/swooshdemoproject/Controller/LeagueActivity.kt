@@ -2,15 +2,22 @@ package com.example.hp.swooshdemoproject.Controller
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.View
 import android.widget.Toast
-import com.example.hp.swooshdemoproject.Utilities.EXTRA_LEAGUE
+import com.example.hp.swooshdemoproject.Model.Player
 import com.example.hp.swooshdemoproject.R
+import com.example.hp.swooshdemoproject.Utilities.EXTRA_PLAYER
 import kotlinx.android.synthetic.main.activity_league.*
 
 class LeagueActivity : BaseActivity() {
 
-    var selectedLeague = ""
+    var player = Player("","")
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putParcelable(EXTRA_PLAYER,player)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,11 +25,19 @@ class LeagueActivity : BaseActivity() {
 
     }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        if (savedInstanceState != null) {
+            player = savedInstanceState.getParcelable(EXTRA_PLAYER)
+        }
+    }
+
     fun onMensClicked(view: View) {
         womensLeagueButton.isChecked = false;
         coedLeagueButton.isChecked = false;
 
-        selectedLeague = "mens"
+        player.league = "mens"
 
     }
 
@@ -31,20 +46,20 @@ class LeagueActivity : BaseActivity() {
         mensLeagueButton.isChecked = false;
         coedLeagueButton.isChecked = false;
 
-        selectedLeague = "womens"
+        player.league = "womens"
     }
 
     fun onCoedClicked(view: View) {
         mensLeagueButton.isChecked = false;
         womensLeagueButton.isChecked = false;
 
-        selectedLeague = "coed"
+        player.league = "coed"
     }
 
     fun leagueNextClicked(view: View) {
-        if (selectedLeague != "") {
+        if (player.league != "") {
             val skillActivity = Intent(this, SkillActivity::class.java)
-            skillActivity.putExtra(EXTRA_LEAGUE,selectedLeague)
+            skillActivity.putExtra(EXTRA_PLAYER,player)
             startActivity(skillActivity)
         } else {
             Toast.makeText(this,"Please Select a League",Toast.LENGTH_SHORT).show()
